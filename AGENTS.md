@@ -39,3 +39,23 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## Convenções deste projeto
+
+- Não altere arquivos fora do escopo pedido. Explique cada alteração.
+- Componentes ficam em `components/`, um arquivo por componente.
+- Estado nunca é modificado no lugar: sempre gere um novo valor.
+- Valores que podem ser calculados a partir do estado não viram estado.
+- Antes de usar um pacote, confirme na documentação se ele funciona no Expo Go.
+- Configuração vem de variáveis de ambiente, sem valor padrão no código. No app, use `process.env.EXPO_PUBLIC_...` com notação de ponto.
+- Código sem comentários e sem alinhamento com espaços extras.
+
+## Contexto desta prova de conceito
+
+- TCC: IoTrap, um honeypot de alta interação (Cowrie) que captura ataques SSH/Telnet contra dispositivos IoT, bloqueia os atacantes no iptables e indexa os eventos no Elasticsearch.
+- Problema: os ataques só podem ser acompanhados no Kibana, pelo computador. A PoC mostra os ataques no celular, quase em tempo real, mesmo quando a API ou a rede falham.
+- Tecnologia investigada: `@tanstack/react-query` (polling, retry, `onlineManager` com `@react-native-community/netinfo`, `focusManager` com `AppState` e persistência do cache com `@tanstack/query-async-storage-persister` + `@react-native-async-storage/async-storage`).
+- A API fica em `api/servidor.py` (Python, só biblioteca padrão). `GET /ataques?limite=N` devolve eventos no formato do Cowrie. Com `IOTRAP_API_FONTE=mock` gera eventos simulados; com `elasticsearch` lê o índice `cowrie-log-*`.
+- Uma tela só, em `App.tsx` + `components/TelaAtaques.tsx`: o usuário vê a lista de ataques recentes, o resumo (eventos, IPs, bloqueados) e um aviso quando está sem conexão ou a API não responde.
+- Não usar Expo Router, a menos que a tecnologia investigada seja a navegação.
+- Fora de escopo: login, design final, notificações push e tudo que não demonstre a pergunta.
