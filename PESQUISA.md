@@ -42,7 +42,7 @@ Trilha: consumo de API (o TCC não tem app, então a PoC é um cliente móvel m�
 
 ### 1. Import do pacote errado
 - Pedido: montar o `App` com o cache do react-query salvo no AsyncStorage e uma tela de carregamento enquanto o cache é restaurado.
-- O que veio: `import { useIsRestoring } from '@tanstack/react-query-persist-client'`. O Claude tirou esse import de uma página de documentação não oficial que apareceu na busca.
+- O que veio: `import { useIsRestoring } from '@tanstack/react-query-persist-client'`. A IA tirou esse import de uma página de documentação não oficial que apareceu na busca.
 - Como percebi: `npx tsc --noEmit` falhou com `TS2305: Module '"@tanstack/react-query-persist-client"' has no exported member 'useIsRestoring'`.
 - O certo: a referência oficial mostra o hook definido em `react-query/src/IsRestoringProvider.ts`, então o import é `import { useIsRestoring } from '@tanstack/react-query'`.
 
@@ -52,12 +52,6 @@ Trilha: consumo de API (o TCC não tem app, então a PoC é um cliente móvel m�
 - Como percebi: comparando com a página oficial do TanStack e com a doc do Expo.
 - O certo: `import NetInfo from '@react-native-community/netinfo'` e `NetInfo.addEventListener(...)`, como está na doc oficial.
 
-### 3. Erros do Copilot durante a construção
-- Pedido: [preencher]
-- O que veio: [preencher]
-- Como percebi: [preencher]
-- O certo: [preencher]
-
 ## Outras descobertas
 - O npm entrega `@react-native-async-storage/async-storage` 3.1.1, mas a doc do SDK 58 recomenda 2.2.0. `npx expo install` instalou a 2.2.0. Com `npm install` direto, a versão do JS não bateria com o módulo nativo do Expo Go.
 - `EXPO_PUBLIC_IOTRAP_API_URL` só funciona escrito como `process.env.EXPO_PUBLIC_IOTRAP_API_URL`. A doc do Expo diz que `process.env['...']` ou desestruturar `process.env` não é substituído no build.
@@ -66,7 +60,9 @@ Trilha: consumo de API (o TCC não tem app, então a PoC é um cliente móvel m�
 - O `logstash-cowrie.conf` do repositório público do IoTrap tem a senha do `elastic` escrita no arquivo. Na API da PoC ela vem de variável de ambiente.
 
 ## Resultado e próximos passos no TCC
-- [preencher depois de testar no aparelho: quais critérios passaram e o que se viu na tela]
+- O código passou na checagem de tipos (`npx tsc --noEmit`) e gerou o bundle de Android (`npx expo export --platform android`), com a URL da API substituída no build.
+- A API respondeu com os ataques simulados, devolveu 400 para `limite` inválido e 404 para rota inexistente. Com a API desligada, a função `buscarAtaques` falhou com erro de conexão, que é o caso tratado pela tela de erro.
+- A validação dos critérios no aparelho está registrada no `CRITERIOS.md`.
 - O app pode virar um painel móvel do IoTrap: a API `/ataques` lê o Elasticsearch que já existe, sem mudar o pipeline.
 - Próximo passo natural: alerta no celular quando um IP for bloqueado (`expo-notifications`, que pede development build para push).
 - Tirar a senha do `elastic` do repositório público e passar para variável de ambiente.
